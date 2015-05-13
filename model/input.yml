@@ -1,0 +1,8 @@
+projects: [
+    { projectId: 1,
+	  testsuiteId: [4, 134, 167, 168, 177, 178, 992, 1060, 1061, 1139]
+	},
+	{ projectId: 2,
+      testsuiteId: [611, 789]
+	}
+]
