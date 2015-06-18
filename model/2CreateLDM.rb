@@ -47,5 +47,7 @@ GoodData.with_connection(credential['gooddata_user'], credential['gooddata_passw
 
   project = GoodData::Project.create_from_blueprint(blueprint, :auth_token => 'INTNA000000GDL2')
   puts "Created project #{project.pid}"
+  data = {"project_id" => "#{project.pid}"}
+  File.open("project_id.yml", "wb") {|f| f.write(data.to_yaml) }
 
 end
