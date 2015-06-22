@@ -1,6 +1,7 @@
 require 'gooddata'
 require 'yaml'
 
+
 credential = YAML.load_file 'credential.yml'
 
 #GoodData.logging_on
@@ -8,9 +9,7 @@ credential = YAML.load_file 'credential.yml'
 GoodData.with_connection(credential['gooddata_user'], credential['gooddata_password']) do |client|
   blueprint = GoodData::Model::ProjectBlueprint.build("TestRail Project") do |p|
     p.add_date_dimension("date_event", :title => "Date (Event)")
-    p.add_date_dimension("created_on", :title => "Date (Created)")
-    p.add_date_dimension("automated_on", :title => "Date (Automated)")
-
+    
     p.add_dataset("project") do |d|
       d.add_anchor("project_id", :title => "Project Id")
       d.add_label("project_name", :reference => "project_id", :title => "Project Name")
@@ -31,8 +30,6 @@ GoodData.with_connection(credential['gooddata_user'], credential['gooddata_passw
       d.add_attribute("sprint", :title => "Sprint")
       d.add_attribute("milestone", :title => "Milestone")
       d.add_attribute("is_automated", :title => "Is Automated")
-      d.add_date("created_on", :dataset => "created_on")
-      d.add_date("automated_on", :dataset => "automated_on")
       d.add_reference("project_id", :dataset => "project")
       d.add_reference("suite_id", :dataset => "test_suite")
     end
@@ -45,7 +42,7 @@ GoodData.with_connection(credential['gooddata_user'], credential['gooddata_passw
     end
   end
 
-  project = GoodData::Project.create_from_blueprint(blueprint, :auth_token => 'INTNA000000GDL2')
+  project = GoodData::Project.create_from_blueprint(blueprint, :auth_token => credential['project_token'])
   puts "Created project #{project.pid}"
   data = {"project_id" => "#{project.pid}"}
   File.open("project_id.yml", "wb") {|f| f.write(data.to_yaml) }

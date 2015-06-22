@@ -30,10 +30,10 @@ CSV.open("projects.csv", "wb") do |csv_project|
 	CSV.open("testsuites.csv", "wb") do |csv_testsuite|
 		CSV.open("testcases.csv", "wb") do |csv_testcase|
 			CSV.open("events.csv", "wb") do |csv_event|
-				csv_project << ['projectId','projectName','projectUrl']
-				csv_testsuite << ['suiteId','suiteName','suiteUrl','projectId']
-				csv_testcase << ['caseId','caseName','caseUrl','sprint','milestone','isAutomated','projectId','suiteId']
-				csv_event << ['caseEventId','event','caseId','dateEvent']
+				csv_project << ['project_id','project_name','project_url']
+				csv_testsuite << ['suite_id','suite_name','suite_url','project']
+				csv_testcase << ['case_id','case_name','case_url','sprint','milestone','is_automated','project','test_suite']
+				csv_event << ['case_event_id','event_type','test_case','date_event']
 				projects.each do |project|
 					csv_project << ["#{project['id']}","#{project['name']}","#{project['url']}"]
 					pre_defined_testsuites = testsuite_table[project['id']]
@@ -49,26 +49,24 @@ CSV.open("projects.csv", "wb") do |csv_project|
 								"#{testcase['custom_sprint']}",
 								milestone_table[testcase['milestone_id']],
 								"#{testcase['custom_is_automated']}",
-								# Time.at(testcase['created_on']).utc.to_date,
-								# if (testcase['custom_automated_on'].nil?) then "" else Date.strptime(testcase['custom_automated_on'],"%m/%d/%Y") end,
 								"#{project['id']}",
 								"#{suite['id']}"]
 							
 								csv_event << ["#{testcase['id']}" + "_CREATED",
 								"CREATED",
 								"#{testcase['id']}",
-								Time.at(testcase['created_on']).utc.to_date]
+								Time.at(testcase['created_on']).utc.strftime("%d/%m/%Y")]
 
 								if (!testcase['custom_automated_on'].nil?) then 
 									csv_event << ["#{testcase['id']}" + "_AUTOMATED",
 									"AUTOMATED",
 									"#{testcase['id']}",
-									Date.strptime(testcase['custom_automated_on'],"%m/%d/%Y")] 
+									Date.strptime(testcase['custom_automated_on'],"%m/%d/%Y").strftime("%d/%m/%Y")]
 								elsif (testcase['custom_is_automated']) then
 									csv_event << ["#{testcase['id']}" + "_AUTOMATED",
 									"AUTOMATED",
 									"#{testcase['id']}",
-									Time.now.strftime("%Y-%m-%d")]
+									Time.now.strftime("%d/%m/%Y")]
 								end
 							end
 						end
